@@ -1,0 +1,5 @@
+.idea
+tomcat*
+node_modules
+out
+target

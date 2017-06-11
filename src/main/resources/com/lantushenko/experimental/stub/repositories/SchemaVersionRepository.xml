@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lantushenko.experimental.stub.repositories.SchemaVersionRepository">
+	
+	<select id="getVersion" resultType="java.lang.Integer">
+		select version from version;
+	</select>
+	<insert id="insertVersion">
+		INSERT INTO version (version)
+        SELECT * FROM (select 0) tmp WHERE NOT EXISTS(
+        SELECT * FROM version);
+	</insert>
+	<update id="updateVersion" parameterType="java.lang.Integer">
+		UPDATE version SET version=#{version}
+	</update>
+</mapper>

@@ -1,0 +1,36 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:sec="http://www.springframework.org/schema/security"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/security
+		http://www.springframework.org/schema/security/spring-security.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	<context:component-scan base-package="com.lantushenko.experimental.stub.security"/>
+
+	<bean id="successHandler" class="com.lantushenko.experimental.stub.security.RESTSavedRequestAwareAuthenticationSuccessHandler" />
+	<bean id="failureHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler" />
+
+ 	<sec:http auto-config="true" use-expressions="true">
+		<sec:form-login
+			default-target-url="/"
+			username-parameter="uname"
+			password-parameter="upwd"
+			authentication-success-handler-ref="successHandler"
+			authentication-failure-handler-ref="failureHandler"
+		/>
+		<sec:intercept-url pattern="/v2/api-docs" access="hasRole('ROLE_ADMIN')"/>
+		<sec:csrf disabled="true"/>
+		<sec:session-management session-fixation-protection="newSession">
+            <sec:concurrency-control max-sessions="1"/>
+        </sec:session-management>
+	</sec:http>
+ 	<sec:global-method-security pre-post-annotations="enabled" />
+
+	<sec:authentication-manager>
+	  <sec:authentication-provider user-service-ref="usersService">
+	  	<sec:password-encoder ref="passwordEncoder"></sec:password-encoder>
+	  </sec:authentication-provider>
+	</sec:authentication-manager>
+ 
+</beans>

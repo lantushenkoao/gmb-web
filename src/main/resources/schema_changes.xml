@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema-changes>
+	<update version="1">
+		CREATE TABLE `users` (
+		`id` INT NOT NULL AUTO_INCREMENT,
+		`login` VARCHAR(256) NOT NULL DEFAULT '',
+		`full_name` VARCHAR(2048) NOT NULL DEFAULT '',
+		`deleted_at` DATETIME NULL,
+		`password` VARCHAR(256) NOT NULL DEFAULT '',
+		PRIMARY KEY (`id`));
+	</update>
+	
+	<update version="2">
+		CREATE TABLE `roles` (
+		`id` INT NOT NULL AUTO_INCREMENT,
+		`name` VARCHAR(128) NOT NULL DEFAULT '',
+		PRIMARY KEY (`id`));
+	</update>
+	
+	<update version="3">
+		CREATE TABLE `user_roles` (
+		`user_id` INT NOT NULL,
+		`role_id` INT NOT NULL,
+		PRIMARY KEY (`user_id`, `role_id`),
+		INDEX `fk_user_roles_role_idx` (`role_id` ASC),
+		CONSTRAINT `fk_user_roles_user`
+		FOREIGN KEY (`user_id`)
+		REFERENCES `gmo`.`users` (`id`)
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION,
+		CONSTRAINT `fk_user_roles_role`
+		FOREIGN KEY (`role_id`)
+		REFERENCES `gmo`.`roles` (`id`)
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION);
+
+	</update>
+	
+	<update version="4">
+	INSERT INTO users(
+            login, full_name, deleted_at, password)
+		VALUES ('first', 'First user', NULL, 
+		'bc3b070d2613f6ae732ad4df922b822586ea922088ec57fd351b52c201295b05f2b4c5c76a840e4b');
+	</update>
+	
+	<update version="5">
+	INSERT INTO roles(name) values('ROLE_MANAGE_USERS');
+	</update>
+	
+	<update version="6">
+	INSERT INTO user_roles(user_id, role_id) VALUES (1,1);
+	</update>
+	<update version="7">
+	INSERT INTO roles(name) values('ROLE_ADMIN');
+	INSERT INTO user_roles(user_id, role_id) VALUES (1,2);
+	</update>
+
+	<update version="8">
+		INSERT INTO roles(name) values('ROLE_MANAGER');
+		INSERT INTO user_roles(user_id, role_id) VALUES (1,3);
+	</update>
+</schema-changes>

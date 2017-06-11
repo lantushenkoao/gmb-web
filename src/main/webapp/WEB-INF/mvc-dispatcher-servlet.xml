@@ -1,0 +1,60 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:sec="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans     
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-4.2.xsd
+        http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+		http://www.springframework.org/schema/security
+		http://www.springframework.org/schema/security/spring-security.xsd">
+ 
+ 	<context:annotation-config/>
+ 	<mvc:annotation-driven/>
+	<context:component-scan base-package="com.lantushenko.experimental.stub.web.controllers" />
+	<sec:global-method-security pre-post-annotations="enabled" />
+
+	<!-- Swagger URL http://localhost:8080/swagger-ui.html-->
+	<bean class="com.lantushenko.experimental.stub.web.SwaggerConfig"/>
+	<mvc:resources mapping="swagger-ui.html" location="classpath:/META-INF/resources/"/>
+	<mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/"/>
+
+	<bean
+	  class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+	  <property name="exceptionMappings">
+		<props>
+			<prop key="org.springframework.security.access.AccessDeniedException">error/access_denied</prop>
+			<prop key="java.lang.Exception">error/exception_error</prop>
+		</props>
+	  </property>
+	</bean>
+
+
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix">
+			<value>/WEB-INF/templates/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+	</bean>
+<!-- JSON converter configuration
+http://www.journaldev.com/2552/spring-restful-web-service-example-with-json-jackson-and-client-program
+-->
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="jsonMessageConverter"/>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="jsonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+	</bean>
+
+</beans>

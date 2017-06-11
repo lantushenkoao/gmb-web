@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+	<users id="10" login="TestUser" full_name="Test user"
+		   password="bc3b070d2613f6ae732ad4df922b822586ea922088ec57fd351b52c201295b05f2b4c5c76a840e4b"
+		   expected_calories="100"
+	/>
+</dataset>
