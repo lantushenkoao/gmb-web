@@ -14,7 +14,6 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
     private String login;
     private String fullName;
     private String password;
-    private Integer expectedCalories;
     private Set<Role> roles;
 
     public UserImpl() {
@@ -98,15 +97,5 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements User {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    @Override
-    public Integer getExpectedCalories() {
-        return expectedCalories;
-    }
-
-    @Override
-    public void setExpectedCalories(Integer expectedCalories) {
-        this.expectedCalories = expectedCalories;
     }
 }

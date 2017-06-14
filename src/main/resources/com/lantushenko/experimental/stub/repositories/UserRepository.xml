@@ -26,10 +26,10 @@
 	</select>
 	
 	<insert id="insert" parameterType="UserImpl">
-		INSERT INTO users(login, full_name, password, expected_calories)
-		VALUES(#{login}, #{fullName}, #{password}, #{expectedCalories})
+		INSERT INTO users(login, full_name, password)
+		VALUES(#{login}, #{fullName}, #{password})
 		<selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
-		   SELECT LASTVAL();
+			SELECT LAST_INSERT_ID() AS id
 		</selectKey>
 	</insert>
 	
@@ -37,7 +37,6 @@
 		UPDATE users SET login=#{login}
 		, full_name=#{fullName}
 		, password=#{password}
-		, expected_calories = #{expectedCalories}
 		WHERE id = #{id}
 	</update>
 	

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lantushenko.experimental.stub.repositories.MetadataRepository">
+
+    <select id="listStations" resultType="StationImpl">
+        select id, code, stationName as name from stations
+        order by stationName
+    </select>
+
+    <select id="listFieldDescriptions" resultType="FieldDescriptionImpl">
+        select id, table_name tableName, column_name columnName, description from fields_description
+        order by table_name, column_name
+    </select>
+</mapper>

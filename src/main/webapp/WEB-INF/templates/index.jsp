@@ -5,8 +5,28 @@
 
 <!DOCTYPE HTML>
 <html lang="en">
+<style>
+	.bar {
+		fill: steelblue;
+	}
+	.axis text {
+		font: 10px sans-serif;
+	}
+
+	.axis path,
+	.axis line {
+		fill: none;
+		stroke: #000;
+		shape-rendering: crispEdges;
+	}
+
+	.x.axis path {
+		display: none;
+	}
+
+</style>
 <head>
-	<title>Calories Monitor</title>
+	<title>База данных ГМО</title>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
@@ -15,7 +35,7 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
 	<link rel="stylesheet" href='${root}/css/base.css'/>
-
+	<link rel="stylesheet" href='${root}/js/node_modules/react-widgets/dist/css/react-widgets.css'/>
 </head>
 <body>
 <div id="content" class="container"/>

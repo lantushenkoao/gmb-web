@@ -61,6 +61,7 @@ class Header extends Component{
                 Welcome {this.state.currentUser.fullName}.
                 <div className="row">
                     <div className="col-lg-2"><Link to={'/'}>Home</Link></div>
+                    <div className="col-lg-2"><Link to="/data">Bar Chart</Link></div>
                     <div className="col-lg-2"><Link to="/myaccount">My Account</Link></div>
                     {canManageUsers ? <div className="col-lg-2"><Link to="/users/list">List Users</Link></div> : null}
                     <div className="col-lg-2"><a href="#" onClick={this.logout}>Log out</a></div>

@@ -22,8 +22,4 @@ public interface User extends AbstractEntity, UserDetails {
     Set<Role> getRoles();
 
     void setRoles(Set<Role> roles);
-
-    Integer getExpectedCalories();
-
-    void setExpectedCalories(Integer expectedCalories);
 }
