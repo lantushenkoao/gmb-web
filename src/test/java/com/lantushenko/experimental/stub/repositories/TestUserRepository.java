@@ -27,7 +27,6 @@ public class TestUserRepository extends AbstractDaoTest {
         u.setFullName("Test user");
         u.setLogin("login");
         u.setPassword("ab14b");
-        u.setExpectedCalories(0);
         userRepository.insert(u);
         assertNotNull(u.getId());
     }

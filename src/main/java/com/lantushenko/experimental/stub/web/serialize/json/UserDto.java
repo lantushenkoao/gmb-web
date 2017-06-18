@@ -18,6 +18,4 @@ public class UserDto extends AbstractDto {
     public String getFullName() {
         return user.getFullName();
     }
-
-    public Integer getExpectedCalories(){ return user.getExpectedCalories();}
 }

@@ -21,8 +21,10 @@ const BarChart = require('./pages/data/BarChart.jsx');
 
 const Moment = require('moment');
 const momentLocalizer = require('react-widgets/lib/localizers/moment');
+const numberLocalizer = require('react-widgets/lib/localizers/simple-number');
 
 momentLocalizer(Moment);
+numberLocalizer();
 
 jQuery(document).ready(function () {
 

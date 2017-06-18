@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import Header from '../../components/Header.jsx';
-import Multiselect from 'react-widgets/lib/Multiselect';
-import DateTimePicker from 'react-widgets/lib/DateTimePicker';
+import ParametersSelector from '../../components/ParametersSelector.jsx';
 
 import { scaleLinear } from 'd3-scale';
 import { scaleOrdinal } from 'd3-scale';
@@ -31,18 +30,44 @@ class BarChart extends Component {
             selectedStations : [],
             fields: [],
             selectedFields: [],
+            startDate: null,
+            endDate: null,
             data: demoData,
+            bucketsCount: 50,
             size: [1000,500]
         };
         this.createBarChart = this.createBarChart.bind(this);
+        this.renderBarChart = this.renderBarChart.bind(this);
+        this.onParametersChanged = this.onParametersChanged.bind(this);
     }
-    componentDidMount() {
-        this.createBarChart()
+
+    onParametersChanged(name, value){
+        const obj = {};
+        obj[name] = value;
+        this.setState(obj);
     }
-    componentDidUpdate() {
-        this.createBarChart()
-    }
+
     createBarChart() {
+        $.ajax({
+            type: 'GET',
+            cache: false,
+            url: '/api/data/aggregated/avg',
+            data: {
+                periodStart: this.state.startDate.toISOString(),
+                periodEnd: this.state.endDate.toISOString(),
+                tableName: this.state.selectedFields.map(f=>f.tableName).get().first(),
+                columnName: this.state.selectedFields.map(f=>f.columnName).get().first(),
+                bucketsCount: this.state.bucketsCount,
+                stationCodes: this.state.selectedStations.map(s=>s.code)
+            }
+        }).done(data=>{
+            this.setState({
+                data: data
+            });
+        });
+    }
+
+    renderBarChart() {
         const node = this.node;
 
         const yData = $.map(this.state.data, d=>d.y)
@@ -106,7 +131,8 @@ class BarChart extends Component {
                 stations: $.map(data, (d)=> {
                     return {
                         id: d.id,
-                        name: `${d.code} ${d.name}`
+                        name: `${d.code} ${d.name}`,
+                        code: d.code
                     };
                 })
             });
@@ -120,7 +146,9 @@ class BarChart extends Component {
                 fields: $.map(data, (d)=> {
                    return {
                        id: d.id,
-                       name: `${d.description} (${d.tableName} - ${d.columnName})'`
+                       name: `${d.description} (${d.tableName} - ${d.columnName})'`,
+                       tableName: d.tableName,
+                       columnName: d.columnName
                    };
                 })
             });
@@ -130,38 +158,19 @@ class BarChart extends Component {
     render(){
         return <div>
             <Header/>
+            <ParametersSelector
+                onParameterChanged={this.onParametersChanged}
+                stations={this.state.stations}
+                selectedStations={this.state.selectedStations}
+                fields={this.state.fields}
+                selectedFields={this.state.selectedFields}
+                startDate={this.state.startDate}
+                endDate={this.state.endDate}
+                bucketsCount={this.state.bucketsCount}
+            />
             <div className="row">
                 <div className="col-lg-4">
-                    Станции
-                    <Multiselect
-                        data={this.state.stations}
-                        valueField = "id"
-                        textField = "name"
-                        filter = "contains"
-                        caseSensitive = {false}
-                        onChange={value => this.setState({selectedStations: value})}
-                    />
-                </div>
-                <div className="col-lg-8">
-                    Типы данных
-                    <Multiselect
-                        data={this.state.fields}
-                        valueField = "id"
-                        textField = "name"
-                        filter = "contains"
-                        caseSensitive = {false}
-                        onChange={value => this.setState({selectedFields: value})}
-                    />
-                </div>
-            </div>
-            <div className="row">
-                <div className="col-lg-2">
-                    Начальная дата
-                    <DateTimePicker time={false} defaultValue={null}/>
-                </div>
-                <div className="col-lg-2">
-                    Конечная дата
-                    <DateTimePicker time={false} defaultValue={null}/>
+                    <button onClick={this.createBarChart}>Показать</button>
                 </div>
             </div>
             <svg ref={node => this.node = node}

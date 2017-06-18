@@ -1,7 +1,13 @@
 package com.lantushenko.experimental.stub.dao;
 
-/**
- * Created by admin on 12/06/2017.
- */
+import java.util.Date;
+
 public interface AggragatedData {
+    Double getAvgData();
+
+    Date getPeriodStart();
+
+    Date getPeriodEnd();
+
+    Station getStation();
 }

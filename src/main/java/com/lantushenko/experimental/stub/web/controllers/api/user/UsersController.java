@@ -53,7 +53,6 @@ public class UsersController {
         User user = usersService.findUserById(resolveUserId(id));
         user.setLogin(login);
         user.setFullName(fullName);
-        user.setExpectedCalories(expectedCalories);
 
         if(StringUtils.hasText(password)){
             usersService.setPasswordNoUpdate(user, password);

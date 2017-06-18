@@ -4,6 +4,9 @@
 
 <mapper namespace="com.lantushenko.experimental.stub.repositories.MetadataRepository">
 
+    <select id="getStationByCode" resultType="StationImpl" parameterType="java.lang.String">
+        select id, code, stationName as name from stations where Code=#{stationCode}
+    </select>
     <select id="listStations" resultType="StationImpl">
         select id, code, stationName as name from stations
         order by stationName

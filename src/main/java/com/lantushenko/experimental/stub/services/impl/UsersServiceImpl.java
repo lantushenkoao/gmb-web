@@ -38,7 +38,6 @@ public class UsersServiceImpl implements UsersService, UserDetailsService {
         UserImpl user = new UserImpl();
         user.setLogin(login);
         user.setFullName(fullName);
-        user.setExpectedCalories(expectedCalories);
         String encodedPassword = passwordEncoder.encode(password);
         user.setPassword(encodedPassword);
 
