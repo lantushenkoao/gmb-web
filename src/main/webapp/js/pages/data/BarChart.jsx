@@ -1,24 +1,18 @@
 import React, {Component} from 'react';
 import Header from '../../components/Header.jsx';
 import ParametersSelector from '../../components/ParametersSelector.jsx';
+import moment from 'moment';
 
-import { scaleLinear } from 'd3-scale';
-import { scaleOrdinal } from 'd3-scale';
-import { max } from 'd3-array';
-import { select } from 'd3-selection';
-import { axisBottom } from 'd3-axis';
-import { axisLeft } from 'd3-axis';
+import { scaleLinear, scaleOrdinal, scaleTime } from 'd3-scale';
+import { extent } from 'd3-array';
+import { select, selectAll } from 'd3-selection';
+import { axisLeft, axisBottom } from 'd3-axis';
+import { timeFormat } from 'd3-time-format';
+import { format } from 'd3-format';
 
 
-const demoData = [
-    {x: 'A', y: 0.04167},
-    {x: 'B', y: 0.01492},
-    {x: 'C', y: 0.02782},
-    {x: 'D', y: 0.01782},
-    {x: 'E', y: 0.00582}
-];
 
-//react widgets http://jquense.github.io/react-widgets/docs/#/?_k=h010sg
+
 //D3 tutorial https://bost.ocks.org/mike/bar/3/
 //https://bl.ocks.org/mbostock/3885304
 class BarChart extends Component {
@@ -27,14 +21,18 @@ class BarChart extends Component {
         super(props);
         this.state = {
             stations : [],
-            selectedStations : [],
+            selectedStations : {
+                code : 4553270,
+                id: '1',
+                name: '4553270 Черноморское'
+            },
             fields: [],
             selectedFields: [],
-            startDate: null,
-            endDate: null,
-            data: demoData,
-            bucketsCount: 50,
-            size: [1000,500]
+            startDate: new Date(1950, 1, 1),
+            endDate: new Date(1950, 3, 1),
+            data: [],
+            bucketsCount: 50
+
         };
         this.createBarChart = this.createBarChart.bind(this);
         this.renderBarChart = this.renderBarChart.bind(this);
@@ -53,54 +51,55 @@ class BarChart extends Component {
             cache: false,
             url: '/api/data/aggregated/avg',
             data: {
-                periodStart: this.state.startDate.toISOString(),
-                periodEnd: this.state.endDate.toISOString(),
-                tableName: this.state.selectedFields.map(f=>f.tableName).get().first(),
-                columnName: this.state.selectedFields.map(f=>f.columnName).get().first(),
+                periodStart: moment(this.state.startDate).format('YYYY-MM-DD'),
+                periodEnd: moment(this.state.endDate).format('YYYY-MM-DD'),
+                tableName: this.state.selectedFields.map(f=>f.tableName)[0],
+                columnName: this.state.selectedFields.map(f=>f.columnName)[0],
                 bucketsCount: this.state.bucketsCount,
-                stationCodes: this.state.selectedStations.map(s=>s.code)
+                stationCodes: this.state.selectedStations.code
             }
         }).done(data=>{
             this.setState({
                 data: data
-            });
+            }, this.renderBarChart);
         });
     }
 
     renderBarChart() {
         const node = this.node;
 
-        const yData = $.map(this.state.data, d=>d.y)
-        const yDataMax = max(yData);
-        const margin = {top: 20, right: 30, bottom: 30, left: 40},
-            width = this.state.size[0] - margin.left - margin.right,
-            height = this.state.size[1] - margin.top - margin.bottom;
+        selectAll("svg > *").remove();
 
-        const chart = select(node);
-        chart
-            .attr('width', width + margin.left + margin.right)
-            .attr('height', height + margin.top + margin.bottom);
+        const yExtent = extent(this.state.data, d=>d.data);
+        const xExtent = extent(this.state.data, d=>new Date(d.bucketStart));
+        const margin = {top: 20, right: 30, bottom: 30, left: 80},
+            width = this.props.size[0] - margin.left - margin.right,
+            height = this.props.size[1] - margin.top - margin.bottom;
 
-        const barWidth = width / this.state.data.length;
+        const chart = select(node).append('g')
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
         const barPadding = 1.02;
+        const barWidth = width / (this.state.data.length * barPadding );
 
 
 
         const yScale = scaleLinear()
-            .domain([0, yDataMax])
+            .domain(yExtent)
             .range([0, height]);
 
-        const xScale = scaleOrdinal()
-            .domain([0, this.state.data.length])
+        const xScale = scaleTime()
+            .domain(xExtent)
             .range([0, width]);
 
 
-        const xAxis = axisBottom(xScale);
-        const yAxis = axisLeft(yScale);
+        const xAxis = axisBottom(xScale).tickFormat(timeFormat("%Y-%m-%d"));
+        const yAxis = axisLeft(yScale)
+            .ticks(10);
 
-        chart.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
+        chart.append('g')
+            .attr('class', 'x axis')
+            .attr('transform', 'translate(0,' + height + ')')
             .call(xAxis);
 
         chart.append("g")
@@ -109,16 +108,14 @@ class BarChart extends Component {
 
         chart
             .selectAll('rect')
-            .data(yData)
+            .data(this.state.data)
             .enter()
-            .append('rect')
+                .append('rect')
                 .attr('class', 'bar')
-                .attr('x', (d,i) => i * barWidth * barPadding)
-                .attr('y', d => height - yScale(d))
-                .attr('height', d => yScale(d))
+                .attr('x', (d,i) => xScale(new Date(d.bucketStart)))
+                .attr('y', d => height - yScale(d.data))
+                .attr('height', d => yScale(d.data))
                 .attr('width', barWidth);
-
-
     }
 
     componentDidMount(){
@@ -173,14 +170,21 @@ class BarChart extends Component {
                     <button onClick={this.createBarChart}>Показать</button>
                 </div>
             </div>
-            <svg ref={node => this.node = node}
-                 width={this.state.size[0]} height={this.state.size[1]}>
-            </svg>
+            <div className="chart-container">
+                <svg ref={node => this.node = node}
+                     width={this.props.size[0]} height={this.props.size[1]}>
+                </svg>
+            </div>
         </div>
     }
 }
 
+BarChart.defaultProps = {
+    size: [1000,500]
+}
+
 BarChart.propTypes = {
+    size: React.PropTypes.array
 };
 
 module.exports = BarChart;

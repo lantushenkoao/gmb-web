@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
 
 import Multiselect from 'react-widgets/lib/Multiselect';
+import DropdownList from 'react-widgets/lib/DropdownList';
 import DateTimePicker from 'react-widgets/lib/DateTimePicker';
 import NumberPicker from 'react-widgets/lib/NumberPicker';
 
+//react widgets http://jquense.github.io/react-widgets/docs/#/?_k=h010sg
 class ParametersSelector extends Component {
     constructor(props) {
         super(props)
@@ -14,7 +16,7 @@ class ParametersSelector extends Component {
             <div className="row">
                 <div className="col-lg-4">
                     Станции
-                    <Multiselect
+                    <DropdownList
                         data={this.props.stations}
                         valueField = "id"
                         textField = "name"
@@ -64,7 +66,7 @@ class ParametersSelector extends Component {
 ParametersSelector.propTypes = {
     onParameterChanged : React.PropTypes.func.isRequired,
     stations: React.PropTypes.array.isRequired,
-    selectedStations: React.PropTypes.array,
+    selectedStations: React.PropTypes.object,
     fields: React.PropTypes.array.isRequired,
     selectedFields: React.PropTypes.array,
     startDate: React.PropTypes.object,

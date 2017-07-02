@@ -19,11 +19,11 @@ const EditUser = require('./pages/EditUser.jsx');
 const Home = require('./pages/Home.jsx');
 const BarChart = require('./pages/data/BarChart.jsx');
 
-const Moment = require('moment');
+const moment = require('moment');
 const momentLocalizer = require('react-widgets/lib/localizers/moment');
 const numberLocalizer = require('react-widgets/lib/localizers/simple-number');
 
-momentLocalizer(Moment);
+momentLocalizer(moment);
 numberLocalizer();
 
 jQuery(document).ready(function () {
@@ -41,14 +41,3 @@ jQuery(document).ready(function () {
         </ReactRouter.Router>
     ), document.getElementById('content'));
 });
-/*
- var UsersList = require('./pages/UsersList.jsx');
- var AddUser = require('./pages/AddUser.jsx');
- var EditUser = require('./pages/EditUser.jsx');
-
-
- <ReactRouter.Router path="/users/list" component={UsersList}></ReactRouter.Router>
- <ReactRouter.Router path="/users/edit" component={EditUser}></ReactRouter.Router>
- <ReactRouter.Router path="/users/add" component={AddUser}></ReactRouter.Router>
-
- */
