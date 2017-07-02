@@ -1,21 +1,11 @@
 import React, {Component} from 'react';
 import Header from '../../components/Header.jsx';
 import ParametersSelector from '../../components/ParametersSelector.jsx';
+import LinearChart from '../../components/LinearChart.jsx';
 import moment from 'moment';
 
-import { scaleLinear, scaleOrdinal, scaleTime } from 'd3-scale';
-import { extent } from 'd3-array';
-import { select, selectAll } from 'd3-selection';
-import { axisLeft, axisBottom } from 'd3-axis';
-import { timeFormat } from 'd3-time-format';
-import { format } from 'd3-format';
 
-
-
-
-//D3 tutorial https://bost.ocks.org/mike/bar/3/
-//https://bl.ocks.org/mbostock/3885304
-class BarChart extends Component {
+class DataChart extends Component {
 
     constructor(props){
         super(props);
@@ -35,7 +25,6 @@ class BarChart extends Component {
 
         };
         this.createBarChart = this.createBarChart.bind(this);
-        this.renderBarChart = this.renderBarChart.bind(this);
         this.onParametersChanged = this.onParametersChanged.bind(this);
     }
 
@@ -61,61 +50,8 @@ class BarChart extends Component {
         }).done(data=>{
             this.setState({
                 data: data
-            }, this.renderBarChart);
+            });
         });
-    }
-
-    renderBarChart() {
-        const node = this.node;
-
-        selectAll("svg > *").remove();
-
-        const yExtent = extent(this.state.data, d=>d.data);
-        const xExtent = extent(this.state.data, d=>new Date(d.bucketStart));
-        const margin = {top: 20, right: 30, bottom: 30, left: 80},
-            width = this.props.size[0] - margin.left - margin.right,
-            height = this.props.size[1] - margin.top - margin.bottom;
-
-        const chart = select(node).append('g')
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        const barPadding = 1.02;
-        const barWidth = width / (this.state.data.length * barPadding );
-
-
-
-        const yScale = scaleLinear()
-            .domain(yExtent)
-            .range([0, height]);
-
-        const xScale = scaleTime()
-            .domain(xExtent)
-            .range([0, width]);
-
-
-        const xAxis = axisBottom(xScale).tickFormat(timeFormat("%Y-%m-%d"));
-        const yAxis = axisLeft(yScale)
-            .ticks(10);
-
-        chart.append('g')
-            .attr('class', 'x axis')
-            .attr('transform', 'translate(0,' + height + ')')
-            .call(xAxis);
-
-        chart.append("g")
-            .attr("class", "y axis")
-            .call(yAxis);
-
-        chart
-            .selectAll('rect')
-            .data(this.state.data)
-            .enter()
-                .append('rect')
-                .attr('class', 'bar')
-                .attr('x', (d,i) => xScale(new Date(d.bucketStart)))
-                .attr('y', d => height - yScale(d.data))
-                .attr('height', d => yScale(d.data))
-                .attr('width', barWidth);
     }
 
     componentDidMount(){
@@ -153,6 +89,10 @@ class BarChart extends Component {
     }
 
     render(){
+        let chart = null;
+        if(this.state.data.length > 0){
+            chart = <LinearChart size={[1000,500]} data={this.state.data} />
+        }
         return <div>
             <Header/>
             <ParametersSelector
@@ -170,21 +110,17 @@ class BarChart extends Component {
                     <button onClick={this.createBarChart}>Показать</button>
                 </div>
             </div>
-            <div className="chart-container">
-                <svg ref={node => this.node = node}
-                     width={this.props.size[0]} height={this.props.size[1]}>
-                </svg>
-            </div>
+            {chart}
         </div>
     }
 }
 
-BarChart.defaultProps = {
+DataChart.defaultProps = {
     size: [1000,500]
 }
 
-BarChart.propTypes = {
+DataChart.propTypes = {
     size: React.PropTypes.array
 };
 
-module.exports = BarChart;
+module.exports = DataChart;

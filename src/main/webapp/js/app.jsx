@@ -17,7 +17,7 @@ const UsersList = require('./pages/UsersList.jsx');
 const AddUser = require('./pages/AddUser.jsx');
 const EditUser = require('./pages/EditUser.jsx');
 const Home = require('./pages/Home.jsx');
-const BarChart = require('./pages/data/BarChart.jsx');
+const DataChart = require('./pages/data/DataChart.jsx');
 
 const moment = require('moment');
 const momentLocalizer = require('react-widgets/lib/localizers/moment');
@@ -36,8 +36,8 @@ jQuery(document).ready(function () {
                 <ReactRouter.Router path="/users/list" component={UsersList} />
                 <ReactRouter.Router path="/users/edit" component={EditUser} />
                 <ReactRouter.Router path="/users/add" component={AddUser} />
-                <ReactRouter.Router path="/data" component={BarChart} />
-                <ReactRouter.Router path="/data/barchart" component={BarChart} />
+                <ReactRouter.Router path="/data" component={DataChart} />
+                <ReactRouter.Router path="/data/barchart" component={DataChart} />
         </ReactRouter.Router>
     ), document.getElementById('content'));
 });
